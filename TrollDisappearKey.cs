@@ -13,7 +13,7 @@ public static class TrollDisappearKey
     [UnmanagedFunctionPointer(CallingConvention.StdCall, CharSet = CharSet.Unicode, SetLastError = true)]
     public delegate int delegateRegOpenKeyExW(IntPtr hKey, string lpSubKey, uint ulOptions, int samDesired, out IntPtr phkResult);
 
-    static NetHook hook1 = new NetHook();
+    static lib hook1 = new lib();
 
     
 
@@ -94,101 +94,62 @@ public static class TrollDisappearKey
 
 
 // shortened hooking library 
-public class NetHook
+public class lib
 {
-    private int mOldMemoryProtect;
-    private IntPtr mOldMethodAddress;
-    private IntPtr mNewMethodAddress;
-    private byte[] mOldMethodAsmCode;
-    private byte[] mNewMethodAsmCode;
-    public const int PAGE_EXECUTE_READWRITE = 64;
+    private int oldProtect;
+private IntPtr targetAddr, hookAddr;
+private byte[] originalBytes, hookBytes;
+public const int PAGE_EXECUTE_READWRITE = 0x40;
 
-    public static readonly IntPtr NULL = IntPtr.Zero;
+[DllImport("kernel32.dll", CharSet = CharSet.Auto)]
+public static extern IntPtr GetModuleHandle(string lpModuleName);
 
-    [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
-    public static extern IntPtr GetModuleHandle(string lpModuleName);
+[DllImport("kernel32.dll", SetLastError = true)]
+public static extern IntPtr GetProcAddress(IntPtr hModule, string lpProcName);
 
-    [DllImport("kernel32.dll", SetLastError = true)]
-    public static extern IntPtr GetProcAddress(IntPtr hModule, string lpProcName);
+[DllImport("kernel32.dll", SetLastError = true)]
+public static extern bool VirtualProtect(IntPtr lpAddress, int size, int newProtect, out int oldProtect);
 
-    [DllImport("kernel32.dll", SetLastError = true)]
-    public static extern bool VirtualProtect(IntPtr lpAddress, int dwSize, int flNewProtect, out int lpflOldProtect);
+public void Install(IntPtr target, IntPtr hook)
+{
+    if (target == IntPtr.Zero || hook == IntPtr.Zero)
+        throw new ArgumentException("Invalid address.");
 
-    public void Install(IntPtr oldMethodAddress, IntPtr newMethodAddress)
-    {
-        if (oldMethodAddress == NULL || newMethodAddress == NULL)
-            throw new Exception("The address is invalid.");
-        if (!VirtualProtect(oldMethodAddress, 12, PAGE_EXECUTE_READWRITE, out this.mOldMemoryProtect))
-            throw new Exception("Unable to modify memory protection.");
-        this.mOldMethodAddress = oldMethodAddress;
-        this.mNewMethodAddress = newMethodAddress;
-        this.mOldMethodAsmCode = this.GetHeadCode(this.mOldMethodAddress);
-        this.mNewMethodAsmCode = this.ConvertToBinary((long)this.mNewMethodAddress);
-        this.mNewMethodAsmCode = this.CombineOfArray(new byte[] { 0x48, 0xB8 }, this.mNewMethodAsmCode);
-        this.mNewMethodAsmCode = this.CombineOfArray(this.mNewMethodAsmCode, new byte[] { 0x50, 0xC3 });
-        if (!this.WriteToMemory(this.mNewMethodAsmCode, this.mOldMethodAddress, 12))
-            throw new Exception("Cannot be written to memory.");
-    }
+    targetAddr = target;
+    hookAddr = hook;
 
-    public void Suspend()
-    {
-        if (this.mOldMethodAddress == NULL)
-            throw new Exception("Unable to suspend.");
-        this.WriteToMemory(this.mOldMethodAsmCode, this.mOldMethodAddress, 12);
-    }
+    if (!VirtualProtect(targetAddr, 12, PAGE_EXECUTE_READWRITE, out oldProtect))
+        throw new InvalidOperationException("Memory protection change failed.");
 
-    public void Resume()
-    {
-        if (this.mOldMethodAddress == NULL)
-            throw new Exception("Unable to resume.");
-        this.WriteToMemory(this.mNewMethodAsmCode, this.mOldMethodAddress, 12);
-    }
+    originalBytes = ReadBytes(targetAddr, 12);
+    hookBytes = new byte[] { 0x48, 0xB8 }         // mov rax, immediate64
+        .Concat(BitConverter.GetBytes(hook.ToInt64()))
+        .Concat(new byte[] { 0x50, 0xC3 })         // push rax; ret
+        .ToArray();
 
-    private byte[] GetHeadCode(IntPtr ptr)
-    {
-        byte[] buffer = new byte[12];
-        Marshal.Copy(ptr, buffer, 0, 12);
-        return buffer;
-    }
-    private byte[] ConvertToBinary(long num)
-    {
-        byte[] buffer = new byte[8];
-        IntPtr ptr = Marshal.AllocHGlobal(8);
-        Marshal.WriteInt64(ptr, num);
-        Marshal.Copy(ptr, buffer, 0, 8);
-        Marshal.FreeHGlobal(ptr);
-        return buffer;
-    }
-    private byte[] CombineOfArray(byte[] x, byte[] y)
-    {
-        int i = 0, len = x.Length;
-        byte[] buffer = new byte[len + y.Length];
-        while (i < len)
-        {
-            buffer[i] = x[i];
-            i++;
-        }
-        while (i < buffer.Length)
-        {
-            buffer[i] = y[i - len];
-            i++;
-        }
-        return buffer;
-    }
+    if (!WriteBytes(hookBytes, targetAddr))
+        throw new InvalidOperationException("Write failed.");
+}
 
+public void Suspend() => WriteBytes(originalBytes, targetAddr);
 
-    private bool WriteToMemory(byte[] buffer, IntPtr address, uint size)
-    {
-        try { Marshal.Copy(buffer, 0, address, 12); return true; } catch (Exception e) { return false; }
+public void Resume() => WriteBytes(hookBytes, targetAddr);
 
-    }
+private byte[] ReadBytes(IntPtr addr, int size)
+{
+    byte[] buf = new byte[size];
+    Marshal.Copy(addr, buf, 0, size);
+    return buf;
+}
 
-    public IntPtr GetProcAddress(string strLibraryName, string strMethodName)
-    {
-        return GetProcAddress(GetModuleHandle(strLibraryName), strMethodName);
-    }
+private bool WriteBytes(byte[] data, IntPtr addr)
+{
+    try { Marshal.Copy(data, 0, addr, data.Length); return true; }
+    catch { return false; }
+}
 
-
+public IntPtr GetProcAddress(string lib, string func)
+    => GetProcAddress(GetModuleHandle(lib), func);
 }
 
 
