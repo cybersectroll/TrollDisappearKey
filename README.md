@@ -10,8 +10,8 @@ This breaks the provider dlls loading process and we are able to assembly load a
 ![Image](https://github.com/user-attachments/assets/7ef91a6a-957f-4c91-80a2-c0b54409917c)
 
 # What's unique?
-concept is hooking / byte patching so nothing much really. 
-This works specifically for clr bypass not powershell. It used to work for powershell >1 year ago but something updated and it broke. 
+concept is hooking / byte patching so nothing much really. \
+For powershell, refer to TrollDisappearKeyPS
   
 ## Usage 
 ```
