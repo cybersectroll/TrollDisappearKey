@@ -8,7 +8,7 @@ Upon assembly.load(), internals of amsi/clr will search for reg key "Software\Mi
 We hook the reg query function and when amsi/clr tries to read "Software\Microsoft\AMSI\Providers" we overwrite its value to "Software\Microsoft\AMSI\Providers "  <- note the space after providers
 This breaks the provider dlls loading process and we are able to assembly load any .net assembly we want. For the powershell amsi, its somewhat similar, we break the vendor dll loading and call uninitialize to trigger a reinitialize. 
 
-## .powershell Usage 
+## .powershell Usage (requires admin)
 ![Image](https://github.com/user-attachments/assets/f6b4d83a-ed24-433b-9e2a-4cf6bfe1d1b0)
 ```
 pwd  # run any random command first, this is a must 
@@ -32,7 +32,7 @@ $Uninitialize.Invoke($object,$null)
 
 
   
-## .exe Usage 
+## .exe Usage (requires admin) 
 ![Image](https://github.com/user-attachments/assets/f1678081-5fa8-4f4d-b7d3-ae9bd2e02a9f)
 ![Image](https://github.com/user-attachments/assets/7ef91a6a-957f-4c91-80a2-c0b54409917c)
 
