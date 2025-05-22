@@ -54,9 +54,6 @@ Can rename/obufscate certain strings like the reg key path and void the use of c
 ## Features
 Nothing actually, its quite barebone with short code profile so anyone can tweak it to their needs  (e.g tweak the code to load .dll assemblies instead of just .exe assemblies)
 
-## Credits
-1. Modified hooking library from https://github.com/liulilittle/NetHook
-
 ## Disclaimer
 Should only be used for educational purposes!
 
