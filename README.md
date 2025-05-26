@@ -1,8 +1,15 @@
+## UPDATES
+```diff
+! UPDATE 26/05/2025
+! Added a counter for the .cs/.ps1 files so that after it has completed the redirection of "Software\Microsoft\AMSI\Providers", it will unhook RegOpenKeyExW
+! This is to remove the overhead introduced by hooking every RegOpenKeyExW and causing errors
+! For the powershell reflective loading and .ps1 script, make sure the process has fully loaded, can run some arbitrary commands first..
+```
+
 # TrollDisappearKey
 TrollDisappearKey.cs   -> compile into a .exe that can load .exe assemblies without amsi scanning taking place during assembly.load() \
 TrollDisappearKeyPS.cs -> compile into a .dll to reflectively load to bypass powershell amsi \
 TrollDisappearKeyPS.ps1 -> copy paste into powershell 
-
 
 # How does it work?
 Upon assembly.load(), internals of amsi/clr will search for reg key "Software\Microsoft\AMSI\Providers" to load the relevant provider dlls (i.e security vendor dlls) 
