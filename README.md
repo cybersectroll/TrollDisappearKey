@@ -12,7 +12,7 @@ This breaks the provider dlls loading process and we are able to assembly load a
 ## .powershell Usage (does not require admin)
 ![Image](https://github.com/user-attachments/assets/f6b4d83a-ed24-433b-9e2a-4cf6bfe1d1b0)
 ```
-pwd  # run any random command first, this is a must 
+pwd  # run any random command first, wait for powershell to fully load. this is a must
 
 [System.Reflection.Assembly]::Load([System.IO.File]::ReadAllBytes("C:\TrollDisappearKeyPS.dll"))
 [TrollDisappearKeyPS]::DisappearKey()
