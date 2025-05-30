@@ -7,6 +7,8 @@
 ```
 
 # TrollDisappearKey
+_bypass clr amsi_
+<b><u>underlined text</u></b>
 TrollDisappearKey.cs   -> compile into a .exe that can load .exe assemblies without amsi scanning taking place during assembly.load() \
 TrollDisappearKeyPS.cs -> compile into a .dll to reflectively load to bypass powershell amsi \
 TrollDisappearKeyPS.ps1 -> copy paste into powershell (likely to get flagged) 
