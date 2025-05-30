@@ -7,11 +7,11 @@
 ```
 
 # TrollDisappearKey
-_bypass clr amsi_
-<b><u>underlined text</u></b>
-TrollDisappearKey.cs   -> compile into a .exe that can load .exe assemblies without amsi scanning taking place during assembly.load() \
-TrollDisappearKeyPS.cs -> compile into a .dll to reflectively load to bypass powershell amsi \
-TrollDisappearKeyPS.ps1 -> copy paste into powershell (likely to get flagged) 
+<b>bypass clr amsi</b> <br>
+TrollDisappearKey.cs   -> compile into a .exe that can load .exe assemblies without amsi scanning taking place during assembly.load() <br>
+<b>bypass powershell amsi - more likely to get flagged, especially the .ps1</b> <br>
+TrollDisappearKeyPS.cs -> compile into a .dll to reflectively load \
+TrollDisappearKeyPS.ps1 -> copy paste into powershell 
 
 # How does it work?
 Upon assembly.load(), internals of amsi/clr will search for reg key "Software\Microsoft\AMSI\Providers" to load the relevant provider dlls (i.e security vendor dlls) 
