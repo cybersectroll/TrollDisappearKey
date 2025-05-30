@@ -12,7 +12,7 @@
 TrollDisappearKey.cs   -> compile into a .exe that can load .exe assemblies without amsi scanning taking place during assembly.load() <br>
 <br>
 <b>bypass powershell amsi</b> <br>
-TrollDisappearKeyPS.cs -> compile into a .dll to reflectively load \
+TrollDisappearKeyPS.cs -> compile into a .dll to reflectively load <br>
 TrollDisappearKeyPS.ps1 -> copy paste into powershell (most likely to get flagged)
 
 # How does it work?
