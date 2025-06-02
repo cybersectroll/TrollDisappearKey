@@ -30,7 +30,7 @@ This breaks the provider dlls loading process and we are able to assembly load a
 ![Image](https://github.com/user-attachments/assets/7ef91a6a-957f-4c91-80a2-c0b54409917c)
 
 ```
-TrollDisappearKey.exe <URL TO .EXE ASSEMBLY> <ARGUMENT1,ARGUMENT2>
+TrollDisappearKey.exe <URL TO .EXE ASSEMBLY> <ARGUMENT1,ARGUMENT2> <KEY>
 ```
 ## Example
 ```
