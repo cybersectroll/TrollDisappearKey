@@ -2,6 +2,7 @@
 ```diff
 ! UPDATE 06/07/2025
 ! Added win11 folder
+! PS: This still works for many AV/EDR, the technique is not flagged just the static compiled file. So just obfuscate it and it works lol
 ```
 ```diff
 ! UPDATE 26/05/2025
