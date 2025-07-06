@@ -1,5 +1,9 @@
 ## UPDATES
 ```diff
+! UPDATE 06/07/2025
+! Added win11 folder
+```
+```diff
 ! UPDATE 26/05/2025
 ! Added a counter for the .cs/.ps1 files so that after it has completed the redirection of "Software\Microsoft\AMSI\Providers", it will unhook RegOpenKeyExW
 ! This is to remove the overhead introduced by hooking every RegOpenKeyExW call and causing problems when RegOpenKeyExW is legitimately invoked
