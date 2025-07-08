@@ -26,11 +26,12 @@ public static class TrollDisappearKeyPS
     static public byte[] originalBytes = new byte[12];
     static public byte[] hookBytes = new byte[12];
     static public int counter;
+    static public delegateRegOpenKeyExW A;
 
 
     public static void DisappearKey()
     {
-        delegateRegOpenKeyExW A = RegOpenKeyWDetour;
+        A = RegOpenKeyWDetour;
         targetAddr = GetProcAddress(GetModuleHandle("KERNELBASE.dll"), "RegOpenKeyExW");
         hookAddr = Marshal.GetFunctionPointerForDelegate(A);
         Marshal.Copy(targetAddr, originalBytes, 0, 12);
